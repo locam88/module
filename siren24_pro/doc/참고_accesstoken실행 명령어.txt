@@ -1,0 +1,11 @@
+* accesstoken 발급 명령어
+* client_id , client_secret : 회원사 전용 페이지에서 확인 가능하오니 확인후 값을 채워넣고 명령어 실행해주세요.
+* CLIENT ID :  
+* CLIENT SECRET :  
+
+
+curl -v  "https://sciapi.siren24.com:52099/authentication/oauth2/token" ^
+  -H "Content-Type: application/json" ^
+  -H "Accept: application/json" ^
+  -u "client_id:client_secret" ^
+  --data "{\"dataHeader\":{\"lang_code\":\"kr\"},\"dataBody\":{\"scope\":\"default\",\"grant_type\":\"client_credentials\"}}"
