@@ -1,0 +1,21 @@
+* 최종성공
+AccessToken status = 200
+AccessToken response = {"dataHeader":{"lang_code":"kr","result_code":"S1200","result_msg":"오류 없음 (정상)"},"dataBody":{"access_token":"0deed77a-b930-4a74-a2b3-a8c004ed89f8","token_type":"bearer","expires_in":1576557874,"scope":"read"}}
+CryptoToken response = {"dataHeader":{"lang_code":"kr","result_code":"S1200","result_msg":"오류 없음 (정상)"},"dataBody":{"res_cd":"SRES1200","res_msg":"오류 없음 (정상)","crypto_token_id":"20260619092303-1AA39247-EA32-40D5-8CF8-04BCAE05A71B","crypto_token":"kzI1OCBtugHp0b2BDXmcLhQIE9gpPu6DICYMHRhgTYE=","expires_in":3600}}
+====================================================================
+* E1507접근이 허용되지 않습니다.txt
+  -> 본인인증서비스 white list 에 client IP 추가 필요
+
+status = 200
+response = {"dataHeader":{"lang_code":"kr","result_code":"E1507","result_msg":"접근이 허용되지 않습니다 - ClientIpAddr 불일치"},"dataBody":{"scope":"default","grant_type":"client_credentials"}}
+2026-06-17 16:35:33.569 ERROR 18996 --- [nio-8080-exec-3] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is java.lang.IllegalStateException: Crypto Token 응답에 dataBody가 없습니다. response={"error":"invalid_token","error_description":"Invalid access token: {&quot;dataHeader&quot;:{&quot;lang_code&quot;:&quot;kr&quot;"}] with root cause
+
+java.lang.IllegalStateException: Crypto Token 응답에 dataBody가 없습니다. response={"error":"invalid_token","error_description":"Invalid access token: {&quot;dataHeader&quot;:{&quot;lang_code&quot;:&quot;kr&quot;"}
+====================================================================
+* S1200오류 없음 (정상)
+  -> Invalid access token ... dataBody에 액세스토큰값이 부정확하게 들어가있음.
+status = 200
+response = {"dataHeader":{"lang_code":"kr","result_code":"S1200","result_msg":"오류 없음 (정상)"},"dataBody":{"access_token":"0deed77a-b930-4a74-a2b3-a8c004ed89f8","token_type":"bearer","expires_in":1576558463,"scope":"read"}}
+2026-06-19 09:13:14.725 ERROR 6772 --- [nio-8080-exec-2] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is java.lang.IllegalStateException: Crypto Token 응답에 dataBody가 없습니다. response={"error":"invalid_token","error_description":"Invalid access token: {&quot;dataHeader&quot;:{&quot;lang_code&quot;:&quot;kr&quot;"}] with root cause
+
+====================================================================

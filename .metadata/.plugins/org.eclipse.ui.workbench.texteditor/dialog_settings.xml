@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item key="hasShownOverlayPopupBefore" value="true"/>
+	<item key="replaceBarOpen" value="false"/>
+	<list key="searchhistory">
+		<item value="result.od"/>
+		<item value="요청정보 암호화값"/>
+		<item value="createRequest"/>
+		<item value="Crypto"/>
+		<item value="createAccessToken"/>
+		<item value="createCryptoToken"/>
+		<item value="apiUrl"/>
+		<item value="clientSecret"/>
+		<item value="clientId"/>
+	</list>
+	<section name="org.eclipse.ui.texteditor.GotoLineAction$GotoLineDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="724"/>
+		<item key="DIALOG_Y_ORIGIN" value="392"/>
+	</section>
+</section>

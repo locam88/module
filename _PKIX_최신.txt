@@ -1,0 +1,29 @@
+==================================
+이거 3개만 실행하면됨... 하고 서비스 재기동 그래도 안되면 eclipse 재실행
+
+cd C:\dev\jdk\openjdk-1.8.0.252-2.b09\jre\lib\security
+
+java -cp ./ InstallCert sciapi.siren24.com:52099
+
+keytool -exportcert -keystore jssecacerts -storepass changeit -file output.cert -alias sciapi.siren24.com-1
+
+keytool -importcert -keystore "C:\dev\jdk\openjdk-1.8.0.252-2.b09\jre\lib\security\cacerts" -storepass changeit -file output.cert  -alias sciapi.siren24.com-1
+
+==================================
+
+제거방법
+
+keytool -delete -alias sciapi.siren24.com-1 -keystore "C:\dev\jdk\openjdk-1.8.0.252-2.b09\jre\lib\security\cacerts" -storepass changeit
+
+==================================
+
+이건 참고용...
+
+java -cp ./ InstallCert pcc.siren24.com
+
+keytool -exportcert -keystore jssecacerts -storepass changeit -file output.cert -alias pcc.siren24.com-1
+
+keytool -importcert -keystore "C:\dev\jdk\openjdk-1.8.0.252-2.b09\jre\lib\security\cacerts" -storepass changeit -file output.cert  -alias pcc.siren24.com-1
+
+
+

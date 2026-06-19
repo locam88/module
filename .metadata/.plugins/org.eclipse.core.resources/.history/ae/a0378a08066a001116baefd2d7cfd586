@@ -1,0 +1,121 @@
+package com.example.siren24;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller
+@RequestMapping("/pcc")
+public class PccController {
+
+    @Autowired
+    private PccService pccService;
+
+    /**
+     * 인증서 루트
+     */
+    @GetMapping("/cert.do")
+    public String cert() {
+    	System.out.println(System.getProperty("java.home"));
+    	System.out.println(System.getProperty("java.home"));
+    	System.out.println(System.getProperty("java.home"));
+    	System.out.println(System.getProperty("java.home"));
+    	System.out.println(System.getProperty("java.home"));
+    }
+    /**
+     * 테스트 입력 화면
+     */
+    @GetMapping("/input.do")
+    public String input(Model model) {
+    	model.addAttribute("reqNum", pccService.makeReqNum());
+    	model.addAttribute("certDate", pccService.now());
+    	
+    	return "pcc/input";
+    }
+
+    /**
+     * SCI 표준창 호출 전 요청정보 생성
+     */
+    @PostMapping("/request.do")
+    public String request(
+            @RequestParam("id") String id,
+            @RequestParam("srvNo") String srvNo,
+            @RequestParam("reqNum") String reqNum,
+            @RequestParam("retUrl") String retUrl,
+            @RequestParam("certDate") String certDate,
+            @RequestParam("certGb") String certGb,
+            HttpSession session,
+            Model model
+    ) throws Exception {
+
+        PccRequestResult result = pccService.createRequest(
+                id,
+                srvNo,
+                reqNum,
+                retUrl,
+                certDate,
+                certGb
+        );
+
+        /*
+         * 중요:
+         * 인증 완료 후 result.do에서 RET_INFO 복호화할 때 필요할 수 있으므로
+         * 요청 당시 key/iv를 세션에 저장.
+         */
+        session.setAttribute("PCC_REQ_NUM", reqNum);
+        session.setAttribute("PCC_KEY", result.getKey());
+        session.setAttribute("PCC_IV", result.getIv());
+
+        model.addAttribute("id", id);
+        model.addAttribute("srvNo", srvNo);
+        model.addAttribute("reqNum", reqNum);
+        model.addAttribute("certGb", certGb);
+        model.addAttribute("certDate", certDate);
+
+        model.addAttribute("cryptoTokenId", result.getCryptoTokenId());
+        model.addAttribute("integrityValue", result.getIntegrityValue());
+        model.addAttribute("reqInfo", result.getReqInfoEnc());
+
+        return "pcc/request";
+    }
+
+    /**
+     * SCI 인증 완료 후 결과 수신 URL
+     * retUrl에는 이 주소를 넣어야 함.
+     */
+    @PostMapping("/result.do")
+    public String result(
+            @RequestParam(value = "crypto_token_id", required = false) String reqCryptoTokenId,
+            HttpSession session,
+            Model model
+    ) throws Exception {
+
+        if (reqCryptoTokenId == null || reqCryptoTokenId.trim().isEmpty()) {
+            model.addAttribute("error", "crypto_token_id 파라미터가 없습니다.");
+            return "pcc/result";
+        }
+
+        String key = (String) session.getAttribute("PCC_KEY");
+        String iv = (String) session.getAttribute("PCC_IV");
+
+        if (key == null || iv == null) {
+            model.addAttribute("error", "세션에 암호화 key/iv가 없습니다. 인증 요청부터 다시 진행하세요.");
+            return "pcc/result";
+        }
+
+        PccAuthResult result = pccService.getResult(reqCryptoTokenId, key, iv);
+
+        model.addAttribute("rawResponse", result.getRawResponse());
+        model.addAttribute("rspCd", result.getRspCd());
+        model.addAttribute("retInfo", result.getRetInfo());
+        model.addAttribute("decryptData", result.getDecryptData());
+
+        return "pcc/result";
+    }
+}

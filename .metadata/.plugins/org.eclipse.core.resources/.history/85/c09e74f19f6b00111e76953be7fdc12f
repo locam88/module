@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>본인확인 테스트</title>
+</head>
+<body>
+
+<h3>본인확인 테스트 입력</h3>
+
+<form method="post" th:action="@{/pcc/request.do}">
+
+    <table>
+        <tr>
+            <td>회원사아이디</td>
+            <td>
+                <input type="text" name="id" maxlength="8" value="SBFH001">
+            </td>
+        </tr>
+
+        <tr>
+            <td>서비스번호</td>
+            <td>
+                <input type="text" name="srvNo" maxlength="6" value="003001">
+            </td>
+        </tr>
+
+        <tr>
+            <td>요청번호</td>
+            <td>
+                <input type="text" name="reqNum" maxlength="40" th:value="${reqNum}">
+            </td>
+        </tr>
+
+        <tr>
+            <td>인증구분</td>
+            <td>
+                <select name="certGb">
+                    <option value="H">휴대폰</option>
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td>결과수신URL</td>
+            <td>
+                <input type="text"
+                       name="retUrl"
+                       size="100"
+                       value="https://localhost:8080/pcc/result.do">
+            </td>
+        </tr>
+
+        <tr>
+            <td>요청시간</td>
+            <td>
+                <input type="text" name="certDate" maxlength="40" th:value="${certDate}">
+            </td>
+        </tr>
+    </table>
+
+    <br>
+
+    <button type="submit">본인확인 요청</button>
+
+</form>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+package com.example.siren24;
+
+
+public class PccAuthResult {
+
+    private String rawResponse;
+    private String rspCd;
+    private String retInfo;
+    private String decryptData;
+
+    public String getRawResponse() {
+        return rawResponse;
+    }
+
+    public void setRawResponse(String rawResponse) {
+        this.rawResponse = rawResponse;
+    }
+
+    public String getRspCd() {
+        return rspCd;
+    }
+
+    public void setRspCd(String rspCd) {
+        this.rspCd = rspCd;
+    }
+
+    public String getRetInfo() {
+        return retInfo;
+    }
+
+    public void setRetInfo(String retInfo) {
+        this.retInfo = retInfo;
+    }
+
+    public String getDecryptData() {
+        return decryptData;
+    }
+
+    public void setDecryptData(String decryptData) {
+        this.decryptData = decryptData;
+    }
+}

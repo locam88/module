@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>본인확인 요청</title>
+
+    <script>
+        function openPccWindow() {
+            window.open(
+                '',
+                'PCCV3Window',
+                'width=400,height=630,resizable=1,scrollbars=no,status=0,titlebar=0,toolbar=0,left=300,top=200'
+            );
+
+            document.reqPccForm.action =
+                'https://pcc.siren24.com/pcc_V3/jsp/pcc_V3_j10_v4.jsp';
+
+            document.reqPccForm.target = 'PCCV3Window';
+            document.reqPccForm.submit();
+        }
+    </script>
+</head>
+
+<body onload="openPccWindow();">
+
+<h3>본인확인 표준창 호출 중입니다.</h3>
+
+<table>
+    <tr>
+        <td>회원사아이디</td>
+        <td th:text="${id}"></td>
+    </tr>
+    <tr>
+        <td>서비스번호</td>
+        <td th:text="${srvNo}"></td>
+    </tr>
+    <tr>
+        <td>요청번호</td>
+        <td th:text="${reqNum}"></td>
+    </tr>
+    <tr>
+        <td>인증구분</td>
+        <td th:text="${certGb}"></td>
+    </tr>
+    <tr>
+        <td>요청시간</td>
+        <td th:text="${certDate}"></td>
+    </tr>
+    <tr>
+        <td>요청정보 암호화값</td>
+        <td>
+            <textarea rows="5" cols="100" th:text="${reqInfo}"></textarea>
+        </td>
+    </tr>
+</table>
+
+<form name="reqPccForm" method="post">
+    <input type="hidden" name="crypto_token_id" th:value="${cryptoTokenId}">
+    <input type="hidden" name="integrity_value" th:value="${integrityValue}">
+    <input type="hidden" name="reqInfo" th:value="${reqInfo}">
+    <input type="hidden" name="verSion" value="3">
+</form>
+
+</body>
+</html>

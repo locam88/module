@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>본인확인 결과</title>
+</head>
+<body>
+
+<h3>본인확인 결과</h3>
+
+<div th:if="${error != null}">
+    <p style="color:red;" th:text="${error}"></p>
+</div>
+
+<div th:if="${error == null}">
+
+    <p>
+        <b>응답코드</b> :
+        <span th:text="${rspCd}"></span>
+    </p>
+
+    <p>
+        <b>RET_INFO</b><br>
+        <textarea rows="5" cols="120" th:text="${retInfo}"></textarea>
+    </p>
+
+    <p>
+        <b>복호화 결과</b><br>
+        <textarea rows="15" cols="120" th:text="${decryptData}"></textarea>
+    </p>
+
+    <p>
+        <b>StoS Raw Response</b><br>
+        <textarea rows="15" cols="120" th:text="${rawResponse}"></textarea>
+    </p>
+
+</div>
+
+</body>
+</html>

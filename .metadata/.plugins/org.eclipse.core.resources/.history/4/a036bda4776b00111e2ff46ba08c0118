@@ -1,0 +1,612 @@
+package com.example.siren24;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
+import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.crypto.Cipher;
+import javax.crypto.Mac;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import javax.net.ssl.HttpsURLConnection;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.springframework.stereotype.Service;
+
+/**
+ * NAT IP : 211.236.107.154
+ */
+@Service
+public class PccService {
+    
+    
+    private static final String ACCESS_TOKEN_URL =
+            "https://sciapi.siren24.com:52099/authentication/oauth2/token";
+
+    private static final String CREATE_TOKEN_URL =
+            "https://sciapi.siren24.com:52099/authentication/api/v1.0/common/crypto/token";
+
+    private static final String STOS_URL =
+            "https://pcc.siren24.com/servlet/StoS";
+
+    private static final String CLIENT_ID = "ee9e55c2-da51-40c5-bbf4-697350e7ac16";
+    private static final String CLIENT_SECRET = "7d19557b99244f4382d5c206b10c2cdf";
+    private static final String TRAN_ID = "SBFH001";
+    
+    private static final String RET_URL = "https://impfood.mfds.go.kr/pcc/result";
+
+    /**
+     * access token
+     * @return
+     * @throws Exception
+     */
+	/*
+	 * private String createAccessToken() throws Exception {
+	 * 
+	 * JSONObject dataHeader = new JSONObject(); dataHeader.put("lang_code", "kr");
+	 * 
+	 * JSONObject dataBody = new JSONObject(); dataBody.put("client_id", CLIENT_ID);
+	 * dataBody.put("client_secret", CLIENT_SECRET);
+	 * 
+	 * JSONObject requestJson = new JSONObject(); requestJson.put("dataHeader",
+	 * dataHeader); requestJson.put("dataBody", dataBody);
+	 * 
+	 * Map<String, String> headers = new HashMap<String, String>();
+	 * headers.put("Content-Type", "application/json; charset=utf-8");
+	 * 
+	 * String response = postJson( ACCESS_TOKEN_URL, headers,
+	 * requestJson.toJSONString() );
+	 * 
+	 * JSONParser parser = new JSONParser(); JSONObject responseJson = (JSONObject)
+	 * parser.parse(response);
+	 * 
+	 * JSONObject responseBody = (JSONObject) responseJson.get("dataBody");
+	 * 
+	 * if (responseBody == null) { throw new
+	 * IllegalStateException("Access Token 응답에 dataBody가 없습니다. response=" +
+	 * response); }
+	 * 
+	 * String accessToken = stringValue(responseBody.get("access_token"));
+	 * 
+	 * if (accessToken == null || accessToken.trim().isEmpty()) { throw new
+	 * IllegalStateException("Access Token 응답에 access_token이 없습니다. response=" +
+	 * response); }
+	 * 
+	 * return accessToken; }
+	 */
+    
+/*    private String createAccessToken() throws Exception {
+
+
+        URL url = new URL(ACCESS_TOKEN_URL);
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+        conn.setConnectTimeout(10000);
+        conn.setReadTimeout(10000);
+
+        conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+        conn.setRequestProperty("Accept", "application/json");
+
+        String basicAuth = CLIENT_ID + ":" + CLIENT_SECRET;
+        String encodedAuth = Base64.getEncoder()
+                .encodeToString(basicAuth.getBytes(StandardCharsets.UTF_8));
+
+        conn.setRequestProperty("Authorization", "Basic " + encodedAuth);
+
+        String json =
+                "{"
+              + "\"dataHeader\":{\"lang_code\":\"kr\"},"
+              + "\"dataBody\":{"
+              + "\"scope\":\"default\","
+              + "\"grant_type\":\"client_credentials\""
+              + "}"
+              + "}";
+
+        try (OutputStream os = conn.getOutputStream()) {
+            os.write(json.getBytes(StandardCharsets.UTF_8));
+            os.flush();
+        }
+
+        int status = conn.getResponseCode();
+
+        InputStream is = status >= 200 && status < 300
+                ? conn.getInputStream()
+                : conn.getErrorStream();
+
+        BufferedReader br = new BufferedReader(
+                new InputStreamReader(is, StandardCharsets.UTF_8)
+        );
+
+        StringBuilder sb = new StringBuilder();
+        String line;
+
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+
+        System.out.println("status = " + status);
+        System.out.println("response = " + sb.toString());
+
+        return sb.toString();
+    }
+    */
+    
+    private String createAccessToken() throws Exception {
+
+        URL url = new URL(ACCESS_TOKEN_URL);
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+        conn.setConnectTimeout(10000);
+        conn.setReadTimeout(10000);
+
+        conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+        conn.setRequestProperty("Accept", "application/json");
+
+        String basicAuth = CLIENT_ID + ":" + CLIENT_SECRET;
+        String encodedAuth = Base64.getEncoder()
+                .encodeToString(basicAuth.getBytes(StandardCharsets.UTF_8));
+
+        conn.setRequestProperty("Authorization", "Basic " + encodedAuth);
+
+        String json =
+                "{"
+              + "\"dataHeader\":{\"lang_code\":\"kr\"},"
+              + "\"dataBody\":{"
+              + "\"scope\":\"default\","
+              + "\"grant_type\":\"client_credentials\""
+              + "}"
+              + "}";
+
+        try (OutputStream os = conn.getOutputStream()) {
+            os.write(json.getBytes(StandardCharsets.UTF_8));
+            os.flush();
+        }
+
+        int status = conn.getResponseCode();
+
+        InputStream is = status >= 200 && status < 300
+                ? conn.getInputStream()
+                : conn.getErrorStream();
+
+        BufferedReader br = new BufferedReader(
+                new InputStreamReader(is, StandardCharsets.UTF_8)
+        );
+
+        StringBuilder sb = new StringBuilder();
+        String line;
+
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+
+        String response = sb.toString();
+
+        System.out.println("AccessToken status = " + status);
+        System.out.println("AccessToken response = " + response);
+
+        if (status < 200 || status >= 300) {
+            throw new IllegalStateException("AccessToken 발급 실패. response=" + response);
+        }
+
+        JSONParser parser = new JSONParser();
+        JSONObject responseJson = (JSONObject) parser.parse(response);
+        JSONObject dataBody = (JSONObject) responseJson.get("dataBody");
+
+        if (dataBody == null) {
+            throw new IllegalStateException("AccessToken 응답에 dataBody가 없습니다. response=" + response);
+        }
+
+        String accessToken = stringValue(dataBody.get("access_token"));
+
+        if (accessToken == null || accessToken.trim().isEmpty()) {
+            throw new IllegalStateException("AccessToken 응답에 access_token이 없습니다. response=" + response);
+        }
+
+        return accessToken;
+    }
+    /**
+     * 기존 sample.jsp 역할
+     */
+    public PccRequestResult createRequest(
+            String id,
+            String srvNo,
+            String reqNum,
+            String retUrl,
+            String certDate,
+            String certGb
+    ) throws Exception {
+
+        String reqDate = now();
+
+        JSONObject tokenBody = createCryptoToken(reqDate, reqNum);
+
+        String cryptoTokenId = stringValue(tokenBody.get("crypto_token_id"));
+        String cryptoToken = stringValue(tokenBody.get("crypto_token"));
+
+        String symmetricKey = createSymmetricKey(reqDate, reqNum, cryptoToken);
+
+        String key = symmetricKey.substring(0, 16);
+        String iv = symmetricKey.substring(symmetricKey.length() - 16);
+
+        JSONObject reqJson = new JSONObject();
+        reqJson.put("id", id);
+        reqJson.put("srvNo", srvNo);
+        reqJson.put("reqNum", reqNum);
+        reqJson.put("retUrl", retUrl);
+        reqJson.put("certDate", certDate);
+        reqJson.put("certGb", certGb);
+
+        String reqInfoEnc = encryptAes(key, iv, reqJson.toJSONString());
+
+        String hmacKey = symmetricKey.substring(0, 32);
+        String integrityValue = hmacSha256Base64(hmacKey, reqInfoEnc);
+
+        PccRequestResult result = new PccRequestResult();
+        result.setCryptoTokenId(cryptoTokenId);
+        result.setReqInfoEnc(reqInfoEnc);
+        result.setIntegrityValue(integrityValue);
+        result.setKey(key);
+        result.setIv(iv);
+
+        return result;
+    }
+
+    /**
+     * 기존 result.jsp 역할
+     */
+    public PccAuthResult getResult(
+            String reqCryptoTokenId,
+            String requestKey,
+            String requestIv
+    ) throws Exception {
+
+        String reqDate = now();
+        String reqNo = makeReqNum();
+
+        JSONObject tokenBody = createCryptoToken(reqDate, reqNo);
+
+        String cryptoTokenId = stringValue(tokenBody.get("crypto_token_id"));
+        String cryptoToken = stringValue(tokenBody.get("crypto_token"));
+
+        String symmetricKey = createSymmetricKey(reqDate, reqNo, cryptoToken);
+
+        String stosKey = symmetricKey.substring(0, 16);
+        String stosIv = symmetricKey.substring(symmetricKey.length() - 16);
+
+        JSONObject reqJson = new JSONObject();
+        reqJson.put("id", TRAN_ID);
+        reqJson.put("reqcryptotokenid", reqCryptoTokenId);
+
+        String reqInfoEnc = encryptAes(stosKey, stosIv, reqJson.toJSONString());
+
+        /*
+         * 기존 result.jsp 샘플 기준:
+         * StoS integrity_value는 SHA256(req_date + reqNo + crypto_token)
+         */
+        String integrityValue = sha256Base64(reqDate + reqNo + cryptoToken);
+
+        String rawResponse = callStos(cryptoTokenId, reqInfoEnc, integrityValue);
+
+        JSONParser parser = new JSONParser();
+        JSONObject responseJson = (JSONObject) parser.parse(rawResponse);
+        JSONObject dataBody = (JSONObject) responseJson.get("dataBody");
+
+        String rspCd = null;
+        String retInfo = null;
+        String decryptData = null;
+
+        if (dataBody != null) {
+            rspCd = stringValue(dataBody.get("rsp_cd"));
+            retInfo = stringValue(dataBody.get("RET_INFO"));
+        }
+
+        if ("P000".equals(rspCd) && retInfo != null && !retInfo.isEmpty()) {
+            /*
+             * 주의:
+             * 기존 샘플 주석 기준으로 RET_INFO는 표준창 요청 당시 key/iv로 복호화.
+             * 만약 SCI 문서에 StoS key/iv로 복호화라고 되어 있으면
+             * requestKey/requestIv 대신 stosKey/stosIv로 바꿔야 함.
+             */
+            decryptData = decryptAes(requestKey, requestIv, retInfo);
+        }
+
+        PccAuthResult result = new PccAuthResult();
+        result.setRawResponse(rawResponse);
+        result.setRspCd(rspCd);
+        result.setRetInfo(retInfo);
+        result.setDecryptData(decryptData);
+
+        return result;
+    }
+
+    /*private JSONObject createCryptoToken(String reqDate, String reqNo) throws Exception {
+
+        String accessToken = createAccessToken();
+
+        JSONObject dataHeader = new JSONObject();
+        dataHeader.put("lang_code", "kr");
+
+        JSONObject dataBody = new JSONObject();
+        dataBody.put("client_id", CLIENT_ID);
+        dataBody.put("req_date", reqDate);
+        dataBody.put("req_no", reqNo);
+        dataBody.put("enc_mode", "1");
+
+        JSONObject requestJson = new JSONObject();
+        requestJson.put("dataHeader", dataHeader);
+        requestJson.put("dataBody", dataBody);
+
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Content-Type", "application/json; charset=utf-8");
+        headers.put("Authorization", "bearer " + accessToken);
+
+        String response = postJson(
+                CREATE_TOKEN_URL,
+                headers,
+                requestJson.toJSONString()
+        );
+
+        JSONParser parser = new JSONParser();
+        JSONObject responseJson = (JSONObject) parser.parse(response);
+
+        JSONObject responseBody = (JSONObject) responseJson.get("dataBody");
+
+        if (responseBody == null) {
+            throw new IllegalStateException("Crypto Token 응답에 dataBody가 없습니다. response=" + response);
+        }
+
+        return responseBody;
+    }
+    */
+    private JSONObject createCryptoToken(String reqDate, String reqNo) throws Exception {
+
+        String accessToken = createAccessToken();
+
+        JSONObject dataHeader = new JSONObject();
+        dataHeader.put("lang_code", "kr");
+
+        JSONObject dataBody = new JSONObject();
+        dataBody.put("client_id", CLIENT_ID);
+        dataBody.put("req_date", reqDate);
+        dataBody.put("req_no", reqNo);
+        dataBody.put("enc_mode", "1");
+
+        JSONObject requestJson = new JSONObject();
+        requestJson.put("dataHeader", dataHeader);
+        requestJson.put("dataBody", dataBody);
+
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Content-Type", "application/json; charset=utf-8");
+        headers.put("Accept", "application/json");
+        headers.put("Authorization", "Bearer " + accessToken);
+
+        String response = postJson(
+                CREATE_TOKEN_URL,
+                headers,
+                requestJson.toJSONString()
+        );
+
+        System.out.println("CryptoToken response = " + response);
+
+        JSONParser parser = new JSONParser();
+        JSONObject responseJson = (JSONObject) parser.parse(response);
+        JSONObject responseBody = (JSONObject) responseJson.get("dataBody");
+
+        if (responseBody == null) {
+            throw new IllegalStateException("Crypto Token 응답에 dataBody가 없습니다. response=" + response);
+        }
+
+        return responseBody;
+    }
+    
+
+    private String callStos(
+            String cryptoTokenId,
+            String reqInfoEnc,
+            String integrityValue
+    ) throws Exception {
+
+        JSONObject dataHeader = new JSONObject();
+        dataHeader.put("CNTY_CD", "kr");
+        dataHeader.put("TRAN_ID", TRAN_ID);
+
+        JSONObject dataBody = new JSONObject();
+        dataBody.put("crypto_token_id", cryptoTokenId);
+        dataBody.put("reqInfo", reqInfoEnc);
+        dataBody.put("integrity_value", integrityValue);
+
+        JSONObject requestJson = new JSONObject();
+        requestJson.put("dataHeader", dataHeader);
+        requestJson.put("dataBody", dataBody);
+
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Content-Type", "application/json; charset=utf-8");
+
+        return postJson(STOS_URL, headers, requestJson.toJSONString());
+    }
+
+    private String postJson(
+            String urlStr,
+            Map<String, String> headers,
+            String body
+    ) throws Exception {
+
+        HttpURLConnection conn = null;
+
+        try {
+            URL url = new URL(urlStr);
+            conn = (HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(10000);
+
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                conn.setRequestProperty(entry.getKey(), entry.getValue());
+            }
+
+            BufferedWriter bw = null;
+            try {
+                bw = new BufferedWriter(
+                        new OutputStreamWriter(conn.getOutputStream(), "UTF-8")
+                );
+                bw.write(body);
+                bw.flush();
+            } finally {
+                if (bw != null) {
+                    bw.close();
+                }
+            }
+
+            InputStream is;
+
+            if (conn.getResponseCode() >= 400) {
+                is = conn.getErrorStream();
+            } else {
+                is = conn.getInputStream();
+            }
+
+            StringBuilder sb = new StringBuilder();
+
+            BufferedReader br = null;
+            try {
+                br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+            } finally {
+                if (br != null) {
+                    br.close();
+                }
+            }
+
+            return sb.toString();
+
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+    }
+
+    private String createSymmetricKey(
+            String reqDate,
+            String reqNo,
+            String tokenVal
+    ) throws Exception {
+
+        String value = trim(reqDate) + trim(reqNo) + trim(tokenVal);
+
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] digest = md.digest(value.getBytes("UTF-8"));
+
+        return Base64.getEncoder().encodeToString(digest);
+    }
+
+    private String encryptAes(
+            String key,
+            String iv,
+            String plainText
+    ) throws Exception {
+
+        SecretKeySpec secureKey =
+                new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(
+                Cipher.ENCRYPT_MODE,
+                secureKey,
+                new IvParameterSpec(iv.getBytes("UTF-8"))
+        );
+
+        byte[] encrypted = cipher.doFinal(plainText.getBytes("UTF-8"));
+
+        return Base64.getEncoder().encodeToString(encrypted);
+    }
+
+    private String decryptAes(
+            String key,
+            String iv,
+            String encText
+    ) throws Exception {
+
+        SecretKeySpec secureKey =
+                new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(
+                Cipher.DECRYPT_MODE,
+                secureKey,
+                new IvParameterSpec(iv.getBytes("UTF-8"))
+        );
+
+        byte[] decoded = Base64.getDecoder().decode(encText);
+        byte[] decrypted = cipher.doFinal(decoded);
+
+        return new String(decrypted, "UTF-8");
+    }
+
+    private String hmacSha256Base64(
+            String hmacKey,
+            String message
+    ) throws Exception {
+
+        Mac mac = Mac.getInstance("HmacSHA256");
+
+        SecretKeySpec keySpec =
+                new SecretKeySpec(hmacKey.getBytes("UTF-8"), "HmacSHA256");
+
+        mac.init(keySpec);
+
+        byte[] hmac = mac.doFinal(message.getBytes("UTF-8"));
+
+        return Base64.getEncoder().encodeToString(hmac);
+    }
+
+    private String sha256Base64(String value) throws Exception {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] digest = md.digest(value.getBytes("UTF-8"));
+
+        return Base64.getEncoder().encodeToString(digest);
+    }
+
+    public String now() {
+        return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+    }
+
+    public String makeReqNum() {
+        String time = now();
+        int random = (int) (Math.random() * 900000) + 100000;
+
+        return time + random;
+    }
+
+    private String trim(String value) {
+        return value == null ? "" : value.trim();
+    }
+
+    private String stringValue(Object value) {
+        return value == null ? null : String.valueOf(value);
+    }
+}
